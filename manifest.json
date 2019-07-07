@@ -12,14 +12,14 @@
   "default_locale": "en",
   "background": {
     "scripts": [
+      "js/jquery/jquery.min.js",
       "src/bg/background.js"
     ],
     "persistent": true
   },
   "browser_action": {
     "default_icon": "icons/icon19.png",
-    "default_title": "browser action demo",
-    "default_popup": "src/browser_action/browser_action.html"
+    "default_title": "browser action demo"
   },
   "devtools_page": "src/devtools/devtools.html",
 
@@ -32,7 +32,27 @@
     "activeTab",
     "<all_urls>",
     "storage",
+    "activeTab",
     "http://*/*",
     "https://*/*"
-  ]
+  ],
+  "content_scripts":[
+    {
+       "matches":[
+          "https://www.google.com/*"
+       ],
+       "css":[
+          "src/inject/inject.css"
+       ]
+    },
+    {
+       "matches":[
+          "https://www.google.com/*"
+       ],
+       "js":[
+          "src/inject/inject.js"
+       ]
+    }
+ ],
+  "content_security_policy":  "script-src 'self' 'unsafe-eval'; object-src 'self'"
 }

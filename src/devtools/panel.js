@@ -1,59 +1,75 @@
 document.addEventListener('DOMContentLoaded', function () {
-  var allReq = [];
+  var networkCallsList = [];
+  var constrcutedData = {};
+  var selectedOptions = new Array();
   var link = document.getElementById('btnSubmit');
-  // onClick's logic below:
   link.addEventListener('click', function (event) {
-    //Create an Array.
-    var selected = new Array();
-
-    //Reference the Table.
-    var tblFruits = document.getElementById("resourceType");
-
+    networkCallsList = [];
+    var options = document.getElementById("resourceType");
     //Reference all the CheckBoxes in Table.
-    var chks = tblFruits.getElementsByTagName("INPUT");
-    console.log("==chks====", chks);
-    // Loop and push the checked CheckBox value in Array.
+    var chks = options.getElementsByTagName("INPUT");
     for (var i = 0; i < chks.length; i++) {
       if (chks[i].checked) {
-        selected.push(chks[i].value);
+        selectedOptions.push(chks[i].value);
       }
     }
-    console.log("==selected====", selected);
-    //Display the selected CheckBox values.
-    if (selected.length > 0) {
-      alert("==allReq=="+ allReq.length);
-      alert("Selected values: " + selected.join(","));
-    }
-    chrome.storage.sync.set({ "myKey": selected })
-    var storageData;
-    chrome.storage.sync.get("myKey", function (obj) {
-      console.log("===myKey====", obj);
-      storageData = obj.myKey;
-      allReq = [];
+
+    if (selectedOptions.length > 0) {
       calltoDevTool();
-    });
+    } else {
+      alert("At least select one option to monitor");
+    }
 
-
-    
     function calltoDevTool() {
-      allReq = [];
+      networkCallsList = [];
+      constrcutedData = {};
+      constrcutedData.requestBody = {};
+      constrcutedData.responseBody = {};
       chrome.devtools.network.onRequestFinished.addListener(
         function (request) {
-       //   console.log("==request===", request);
-        //  console.log("====req res type===", request._resourceType);
-          request.getContent(function (body) {
-            // parsed = JSON.parse(body);
-            allReq.push(JSON.parse(body));
-          //  console.log("=============parsedparsed=", parsed);
-          });
-          //   if (request.response.bodySize > 40*1024) {
-          //     chrome.devtools.inspectedWindow.eval(
-          //         'console.log("Large image: " + unescape("' +
-          //         escape(request.request.url) + '"))');
-          //   }
-          console.log("==allReq========", allReq);
-        });     
+          console.log("==request===", request);
+          if (selectedOptions.indexOf(request._resourceType) >= 0) {
+            constrcutedData.resourceType = request._resourceType;
+            constrcutedData.url = request.request.url;
+            var requestMock = {
+              headers: request.request.headers,
+              method: request.request.method
+            }
+            constrcutedData.requestBody = JSON.stringify(requestMock);
+            request.getContent(function (body) {
+              try {
+                constrcutedData.responseBody = JSON.stringify(body);
+                networkCallsList.push(constrcutedData);
+              }
+              catch (err) {
+              }
+            });
+          }
+        });
 
     }
   });
+
+  var stopMonitor = document.getElementById('stopMonitor');
+  stopMonitor.addEventListener('click', function (event) {
+    if (networkCallsList.length) {
+      var result = confirm("Would you like to download as Excel file ?");
+      if (result == true) {
+        var opts = [{ sheetid: 'One', header: true }, { sheetid: 'Two', header: false }];
+        alasql('SELECT INTO XLSX("test.xlsx",?) FROM ?',
+          [opts, [networkCallsList]]);
+        networkCallsList = [];
+      } else {
+        networkCallsList = [];
+      }
+      if (selectedOptions.indexOf('screenshot') >= 0) {
+        chrome.runtime.sendMessage({ takeScreenshot: true });
+      }
+    } else {
+      alert("Nothing to monitor...")
+    }
+  });
 });
+
+
+

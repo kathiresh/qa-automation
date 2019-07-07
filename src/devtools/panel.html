@@ -3,7 +3,9 @@
 
 <head>
     <title>Analysis</title>
-    <script src="js/jquery/jquery.min.js"></script>
+    <script src="../../js/jquery/jquery.min.js"></script>
+    <script src="../../js/alasql.js"></script>
+    <script src="../../js/xlsx.js"></script>
     <script src="panel.js"></script>
 </head>
 
@@ -27,10 +29,14 @@
         <tr>
             <td><input id="font" type="checkbox" value="font" /><label for="font">Font</label></td>
         </tr>
+        <tr>
+            <td><input id="screenshot" type="checkbox" value="screenshot" /><label for="screenshot">Take
+                    Screenshot</label></td>
+        </tr>
     </table>
     <br />
     <button id="btnSubmit">Start monitoring </button>
-    <button id="btnSubmit">Stop monitoring </button>
+    <button id="stopMonitor">Stop monitoring </button>
 </body>
 
 </html>
