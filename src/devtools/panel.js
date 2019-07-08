@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', function () {
             constrcutedData.requestBody = JSON.stringify(requestMock);
             request.getContent(function (body) {
               try {
-                constrcutedData.responseBody = JSON.stringify(body);
+                constrcutedData.responseBody = body;
                 networkCallsList.push(constrcutedData);
               }
               catch (err) {
@@ -46,7 +46,6 @@ document.addEventListener('DOMContentLoaded', function () {
             });
           }
         });
-
     }
   });
 
@@ -58,6 +57,7 @@ document.addEventListener('DOMContentLoaded', function () {
         var opts = [{ sheetid: 'One', header: true }, { sheetid: 'Two', header: false }];
         alasql('SELECT INTO XLSX("test.xlsx",?) FROM ?',
           [opts, [networkCallsList]]);
+
         networkCallsList = [];
       } else {
         networkCallsList = [];

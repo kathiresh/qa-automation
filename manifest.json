@@ -19,7 +19,7 @@
   },
   "browser_action": {
     "default_icon": "icons/icon19.png",
-    "default_title": "browser action demo"
+    "default_title": "QA Automation"
   },
   "devtools_page": "src/devtools/devtools.html",
 
@@ -34,7 +34,8 @@
     "storage",
     "activeTab",
     "http://*/*",
-    "https://*/*"
+    "https://*/*",
+    "debugger"
   ],
   "content_scripts":[
     {

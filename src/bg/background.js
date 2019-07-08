@@ -43,3 +43,5 @@ chrome.runtime.onMessage.addListener(
       screenshot.init();
     }
   });
+
+  console.log("=dddddddd===", chrome.debugger);
