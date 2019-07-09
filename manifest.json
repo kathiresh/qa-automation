@@ -13,13 +13,16 @@
   "background": {
     "scripts": [
       "js/jquery/jquery.min.js",
+      "js/alasql.js",
+      "js/xlsx.js",
       "src/bg/background.js"
     ],
     "persistent": true
   },
   "browser_action": {
     "default_icon": "icons/icon19.png",
-    "default_title": "QA Automation"
+    "default_title": "QA Automation",
+    "default_popup":"src/browser_action/browser_action.html"
   },
   "devtools_page": "src/devtools/devtools.html",
 

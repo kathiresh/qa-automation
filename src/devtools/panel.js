@@ -54,6 +54,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (networkCallsList.length) {
       var result = confirm("Would you like to download as Excel file ?");
       if (result == true) {
+        console.log("==networkCallsList====",networkCallsList);
         var opts = [{ sheetid: 'One', header: true }, { sheetid: 'Two', header: false }];
         alasql('SELECT INTO XLSX("test.xlsx",?) FROM ?',
           [opts, [networkCallsList]]);
