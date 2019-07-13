@@ -1,21 +1,76 @@
 <!doctype html>
 <style type="text/css">
-	#mainPopup {
-		padding: 10px;
+	.container {
 		height: 200px;
 		width: 400px;
-		font-family: Helvetica, Ubuntu, Arial, sans-serif;
 	}
 
-	h1 {
-		font-size: 2em;
+	.width-45 {
+		width: 45%;
+	}
+
+	.left {
+		float: left;
+	}
+
+	.right {
+		float: right;
+	}
+
+	.border-right-grey {
+		border-right: 1px solid lightslategray
 	}
 </style>
 
-<div id="mainPopup">
+<body>
+	<div class="container">
+		<div>
+			Please select resource types you want to track....
+		</div>
+		<div>Resouce Types</div>
+		<div id="resourceType">
+			<div class="width-45 left">
+				<table>
+					<tr>
+						<td><input id="selectAll" type="checkbox" value="selectAll" /><label for="selectAll">Select
+								All</label></td>
+					</tr>
+					<tr>
+						<td><input id="xhr" type="checkbox" value="xhr" /><label for="xhr">XHR</label></td>
+					</tr>
+					<tr>
+						<td><input id="document" type="checkbox" value="document" /><label
+								for="document">Document</label>
+						</td>
+					</tr>
+					<tr>
+						<td><input id="script" type="checkbox" value="script" /><label for="script">Script</label></td>
+					</tr>
+					<tr>
+						<td><input id="image" type="checkbox" value="image" /><label for="image">Image</label></td>
 
-</div>
-<button id="startMonitoring">Start Monitoring</button>
-<button id="stopMonitoring">Stop Monitoring</button>
-<button id="console">Console</button>
-<script src="browser_action.js"></script>
+					</tr>
+					<tr>
+						<td><input id="font" type="checkbox" value="font" /><label for="font">Font</label></td>
+					</tr>
+				</table>
+			</div>
+			<div class="width-45 right">
+				<table class="resourceType">
+					<tr>
+						<td><input id="screenshot" type="checkbox" value="screenshot" /><label
+								for="screenshot">Screenshot</label>
+						</td>
+					</tr>
+					<tr>
+						<td><input id="console" type="checkbox" value="console" /><label for="console">Console
+								messages</label></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+	</div>
+	<button id="startMonitoring">Start Monitoring</button>
+	<button id="stopMonitoring">Stop Monitoring</button>
+	<script src="browser_action.js"></script>
+</body>

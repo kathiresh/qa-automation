@@ -1,5 +1,3 @@
-console.log("======calling======77========66===========")
-
 function insertConsole() {
     var consoleScript = document.createElement('script');
     consoleScript.innerHTML = "console.stdlog = console.log.bind(console);console.stdlog1 = console.log.bind(console);" +
