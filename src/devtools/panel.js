@@ -74,3 +74,4 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 
+console.log("== chrome.devtools====",  chrome.devtools)

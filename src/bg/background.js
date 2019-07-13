@@ -39,6 +39,7 @@ var screenshot = {
 
 chrome.runtime.onMessage.addListener(
   function (request, sender, sendResponse) {
+    console.log("=========bbbbbbbbbbbb==========")
     if (request.takeScreenshot === true) {
       screenshot.init();
     }
@@ -112,10 +113,6 @@ chrome.debugger.onEvent.addListener(function (source, method, params) {
       }
     }
     // Usually loadingFinished will be immediately after responseReceived
-    if (object == null) {
-      console.log('Failed!!');
-      return;
-    }
     gRequests.splice(gRequests.indexOf(object.url), 1);
     // console.log("=====oooooooo====", params)
     chrome.debugger.sendCommand(
@@ -128,17 +125,6 @@ chrome.debugger.onEvent.addListener(function (source, method, params) {
           groupAllRequest[requestId].responseBody = response.body;
           //  allRequests.push(groupAllRequest[requestId]);
           console.log("===groupAllRequest[requestId]groupAllRequest[requestId]==", groupAllRequest)
-
-        }
-        if (gRequests.length === 0) {
-          console.log("======allRequestssssssssssss===", Object.values(groupAllRequest));
-
-
-        }
-        if (response) {
-          //  dispatch(source.tabId, object.target, JSON.parse(response.body));
-        } else {
-          console.log("Empty response for " + object.url);
         }
       });
   }
@@ -186,12 +172,14 @@ const TARGETS = [
   { url: 'https://dev-api.digicontent.io/services/api/*', desc: 'target1' }
 ]
 
+console.log("=====chrome.debuggerchrome.debugger===", chrome.debugger);
 
 chrome.extension.onConnect.addListener(function (port) {
   console.log("Connected ....................................");
   console.log("====tabId=====", tabId);
 
   port.onMessage.addListener(function (msg) {
+    console.log('========msg==', msg);
     if (msg === "start") {
 
       if (tabId) {
@@ -200,54 +188,94 @@ chrome.extension.onConnect.addListener(function (port) {
         }, "1.0");
       }
       chrome.webRequest.onBeforeRequest.addListener(initialListener, { urls: ["https://dev.digicontent.io/*"] }, ["blocking"]);
+      chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+        chrome.tabs.sendMessage(tabs[0].id, { msg: "initConsole" }, function (response) {
+          console.log('==res==', response);
+        });
+      });
     }
     if (msg === "stop") {
-
-      // screenshot.init();
-      var bb = [{ a: 23, b: 34 }];
-      // var cc = [{
-      //   headers: {
-      //     "Referer": "https://dev.digicontent.io/catalogedge/",
-
-      //   },
-      //   method: "GET",
-      //   requestBody: [],
-      //   type: "Script",
-      //   url: "https://dev.digicontent.io/catalogedge/app/settings/settings-module.js"
-      // }]
-
       for (var key in groupAllRequest) {
         console.log("====groupAllRequest[key]===", groupAllRequest[key]);
         if (groupAllRequest[key].type) {
           filteredData.push(groupAllRequest[key]);
         }
       }
-      var opts = [{ sheetid: 'One', header: true }, { sheetid: 'Two', header: false }];
-      alasql('SELECT INTO XLSX("test.xlsx",?) FROM ?',
-        [opts, [filteredData]]);
-      filteredData = [];
-      downloadScreenshot();
+      if (filteredData.length > 0) {
+        var opts = [{ sheetid: 'One', header: true }, { sheetid: 'Two', header: false }];
+        alasql('SELECT INTO XLSX("test.xlsx",?) FROM ?',
+          [opts, [filteredData]]);
+        filteredData = [];
+      } else {
+        alert("No network calls found...")
+      }
+     // downloadScreenshot();
+      getConsoleMessages();
       // chrome.debugger.detach({
       //   tabId: tabId
       // });
     }
+
+
   });
 })
 
+var constants = {
+  "console.logs": "Log",
+  "console.errors": "Error",
+  "console.infos":"Info"
+}
+
+function getConsoleMessages() {
+  console.log('===getConsoleMessages=inside console block=====');
+  chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+    chrome.tabs.sendMessage(tabs[0].id, { msg: "getConsole" }, function (response) {
+      console.log('==res==', response);
+      var consoleResult = [];
+      var consoleObj = {};
+      for (var key in response) {
+        console.log("====groupAllRequest[key]===", response[key]);
+        var msgs = response[key];
+        if (msgs.length) {
+          consoleObj = {};
+          for (var msg in msgs) {
+            consoleObj.type = constants[key];
+            consoleObj.message = msgs[msg][0];
+            consoleResult.push(consoleObj);
+          }
+        }
+      }
+      console.log("===consoleResult===", consoleResult);
+      var opts = [{ sheetid: 'One', header: true }, { sheetid: 'Two', header: false }];
+        alasql('SELECT INTO XLSX("test.xlsx",?) FROM ?',
+          [opts, [consoleResult]]);
+      
+    });
+  });
+
+}
 
 
 function downloadScreenshot() {
   chrome.tabs.captureVisibleTab(null, function (img) {
-    console.log("=========img=========", img)
     var element = document.createElement('a');
     element.setAttribute('href', img);
-    element.setAttribute('download', "file.png");
-
+    element.setAttribute('download', "screenshot.png");
     element.style.display = 'none';
     document.body.appendChild(element);
-
     element.click();
-
     document.body.removeChild(element);
   });
 }
+
+
+
+
+
+
+
+
+
+// chrome.tabs.executeScript({
+//   code: '$("#theButton").click(function() { console.log("====Message from background script."); });'
+// });
