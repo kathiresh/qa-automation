@@ -106,6 +106,13 @@ function getTarget(url) {
   return -1;
 }
 
+function isSelected(option) {
+  if (selectedOptions.indexOf(option) >= 0) {
+    return true
+  }
+  return false;
+}
+
 chrome.extension.onConnect.addListener(function (port) {
   console.log("Connected ....................................");
   console.log("====tabId=====", tabId);
@@ -120,29 +127,30 @@ chrome.extension.onConnect.addListener(function (port) {
           tabId: tabId
         }, "1.0");
       }
-      chrome.webRequest.onBeforeRequest.addListener(initialListener, { urls: ["https://dev.digicontent.io/*"] }, ["blocking"]);
-      if (selectedOptions.indexOf('console') >= 0) {
-        console.log('=enablinggggggggggggggggggg');
+      if (isSelected('network')) {
+        console.log('==--==starting netwrok=====');
+        chrome.webRequest.onBeforeRequest.addListener(initialListener, { urls: ["https://dev.digicontent.io/*"] }, ["blocking"]);
+      }
+      if (isSelected('console')) {
+        console.log('==--==starting console=====');
         chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-          chrome.tabs.sendMessage(tabs[0].id, { msg: "initConsole" }, function (response) {
-            console.log('==res==', response);
-          });
+          chrome.tabs.sendMessage(tabs[0].id, { msg: "initConsole" });
         });
       }
     }
     if (msg.action === "stop") {
-      console.log('=======selectedOptions====stop==', selectedOptions);
       for (var key in groupAllRequest) {
-        console.log("====groupAllRequest[key]===", groupAllRequest[key]);
         if (groupAllRequest[key].type) {
           filteredData.push(groupAllRequest[key]);
         }
       }
-      if (filteredData.length > 0) {
-        downloadAsExcel('api', filteredData);
-        filteredData = [];
-      } else {
-        alert("No network calls found...")
+      if (isSelected('network')) {
+        if (filteredData.length > 0) {
+          downloadAsExcel('api', filteredData);
+          filteredData = [];
+        } else {
+          alert("No network calls found...")
+        }
       }
 
       if (selectedOptions.indexOf('screenshot') >= 0) {

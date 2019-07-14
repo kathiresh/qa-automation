@@ -1,76 +1,93 @@
 <!doctype html>
 <style type="text/css">
-	.container {
-		height: 200px;
-		width: 400px;
-	}
+  body {
+    background: antiquewhite
+  }
 
-	.width-45 {
-		width: 45%;
-	}
+  .container {
+    height: 150px;
+    width: 400px;
+  }
 
-	.left {
-		float: left;
-	}
+  #resourceType {
+    padding-top: 20px;
+  }
 
-	.right {
-		float: right;
-	}
+  @keyframes blink {
 
-	.border-right-grey {
-		border-right: 1px solid lightslategray
-	}
+
+    0% {
+      opacity: .2;
+    }
+
+    20% {
+      opacity: 1;
+    }
+
+
+    100% {
+      opacity: .2;
+    }
+  }
+
+  #monitoring {
+    font-size: 20px;
+    padding-bottom: 20px;
+    color: red;
+    display: none;
+  }
+
+  #monitoring span {
+    font-size: 50px;
+  }
+
+  #monitoring span {
+
+    animation-name: blink;
+
+    animation-duration: 1.4s;
+
+    animation-iteration-count: infinite;
+
+    animation-fill-mode: both;
+  }
+
+  #monitoring span:nth-child(2) {
+    animation-delay: .2s;
+  }
+
+  #monitoring span:nth-child(3) {
+    animation-delay: .4s;
+  }
 </style>
 
 <body>
-	<div class="container">
-		<div>
-			Please select resource types you want to track....
-		</div>
-		<div>Resouce Types</div>
-		<div id="resourceType">
-			<div class="width-45 left">
-				<table>
-					<tr>
-						<td><input id="selectAll" type="checkbox" value="selectAll" /><label for="selectAll">Select
-								All</label></td>
-					</tr>
-					<tr>
-						<td><input id="xhr" type="checkbox" value="xhr" /><label for="xhr">XHR</label></td>
-					</tr>
-					<tr>
-						<td><input id="document" type="checkbox" value="document" /><label
-								for="document">Document</label>
-						</td>
-					</tr>
-					<tr>
-						<td><input id="script" type="checkbox" value="script" /><label for="script">Script</label></td>
-					</tr>
-					<tr>
-						<td><input id="image" type="checkbox" value="image" /><label for="image">Image</label></td>
-
-					</tr>
-					<tr>
-						<td><input id="font" type="checkbox" value="font" /><label for="font">Font</label></td>
-					</tr>
-				</table>
-			</div>
-			<div class="width-45 right">
-				<table class="resourceType">
-					<tr>
-						<td><input id="screenshot" type="checkbox" value="screenshot" /><label
-								for="screenshot">Screenshot</label>
-						</td>
-					</tr>
-					<tr>
-						<td><input id="console" type="checkbox" value="console" /><label for="console">Console
-								messages</label></td>
-					</tr>
-				</table>
-			</div>
-		</div>
-	</div>
-	<button id="startMonitoring">Start Monitoring</button>
-	<button id="stopMonitoring">Stop Monitoring</button>
-	<script src="browser_action.js"></script>
+  <div class="container">
+    <div>
+      Please select resource types you want to track....
+    </div>
+    <div id="resourceType">
+      <table>
+        <tr>
+          <td><input id="network" type="checkbox" value="network" /><label for="network">Network</label>
+          </td>
+        </tr>
+        <tr>
+          <td><input id="screenshot" type="checkbox" value="screenshot" /><label for="screenshot">Screenshot</label>
+          </td>
+        </tr>
+        <tr>
+          <td><input id="console" type="checkbox" value="console" /><label for="console">Console
+              messages</label></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+  <div id="monitoring">
+    Monitoring in process
+    <span>.</span><span>.</span><span>.</span>
+  </div>
+  <button id="startMonitoring">Start Monitoring</button>
+  <button id="stopMonitoring">Stop Monitoring</button>
+  <script src="browser_action.js"></script>
 </body>
